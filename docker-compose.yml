@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    container_name: simple-apps
+    image: simple-apps
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - db_app:/app
+    restart: always
+    # environment:
+      # - DB_HOST=db
+      # - DB_PORT=3306
+      # - DB_NAME=
+      # - DB_USER=
+      # - DB_PASS=
+
+  db:
+    image: mariadb:latest
+    container_name: simple-apps-db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    restart: always
+
+volumes:
+  db_data:
